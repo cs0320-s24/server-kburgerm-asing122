@@ -11,6 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import spark.Request;
 import spark.Response;
@@ -24,6 +25,12 @@ public class BroadbandHandler implements Route {
   public BroadbandHandler() {
     try {
       System.out.println(this.getStateCodes());
+      this.stateCodes = new HashMap<String, Integer>();
+      List<String[]> stateCodeList = this.getStateCodes();
+      stateCodeList.remove(0);
+      for (String[] stateAndCode : stateCodeList) {
+        this.stateCodes.put(stateAndCode[0], Integer.parseInt(stateAndCode[1]));
+      }
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
     } catch (IOException e) {
@@ -33,7 +40,11 @@ public class BroadbandHandler implements Route {
     }
   }
 
-  private Map<String, Integer> getStateCodes()
+  private HashMap<String, Integer> getCountyCodes(int stateCode) {
+    return null;
+  }
+
+  private List<String[]> getStateCodes()
       throws URISyntaxException, IOException, InterruptedException {
     HttpRequest buildAcsApiRequest =
         HttpRequest.newBuilder()
@@ -46,14 +57,13 @@ public class BroadbandHandler implements Route {
         HttpClient.newBuilder()
             .build()
             .send(buildAcsApiRequest, HttpResponse.BodyHandlers.ofString());
-    Map<String, Integer> stateMap = new HashMap<>();
     String jsonMap = sentAcsApiResponse.body();
     try {
       Moshi moshi = new Moshi.Builder().build();
       System.out.println(jsonMap);
-      Type mapType = Types.newParameterizedType(Map.class, String.class, Integer.class);
-      JsonAdapter<Map<String, Integer>> adapter = moshi.adapter(mapType);
-      Map<String, Integer> deserializedStateMap = adapter.fromJson(jsonMap);
+      Type mapType = Types.newParameterizedType(List.class, String[].class);
+      JsonAdapter<List<String[]>> adapter = moshi.adapter(mapType);
+      List<String[]> deserializedStateMap = adapter.fromJson(jsonMap);
       return deserializedStateMap;
     } catch (IOException e) {
       throw e;
