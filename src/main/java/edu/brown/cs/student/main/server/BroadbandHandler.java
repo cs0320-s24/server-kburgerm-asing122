@@ -24,7 +24,6 @@ public class BroadbandHandler implements Route {
 
   public BroadbandHandler() {
     try {
-      System.out.println(this.getStateCodes());
       this.stateCodes = new HashMap<String, String>();
       List<String[]> stateCodeList = this.getStateCodes();
       stateCodeList.remove(0);
@@ -60,7 +59,7 @@ public class BroadbandHandler implements Route {
     String jsonMap = sentAcsApiResponse.body();
     try {
       Moshi moshi = new Moshi.Builder().build();
-      System.out.println(jsonMap);
+      // System.out.println(jsonMap);
       Type mapType = Types.newParameterizedType(List.class, List.class, String.class);
       JsonAdapter<List<List<String>>> adapter = moshi.adapter(mapType);
       List<List<String>> deserializedStateMap = adapter.fromJson(jsonMap);
@@ -135,7 +134,7 @@ public class BroadbandHandler implements Route {
                         + "variables?get=NAME,S2802_C03_022E&for=county:"
                         + countyCode
                         + "&in=state:"
-                        + state))
+                        + stateCode))
             .GET()
             .build();
 
