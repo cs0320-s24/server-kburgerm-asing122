@@ -1,13 +1,13 @@
-package edu.brown.cs.student.main.cache;
+ package edu.brown.cs.student.main.cache;
 
-import java.util.Collection;
+ import java.util.Collection;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import java.util.concurrent.TimeUnit;
+ import com.google.common.cache.CacheBuilder;
+ import com.google.common.cache.CacheLoader;
+ import com.google.common.cache.LoadingCache;
+ import java.util.concurrent.TimeUnit;
 
-public class CachedFileSearch implements Searcher<String, String> {
+ public class CachedFileSearch implements Searcher<String, String> {
     private final Searcher<String, String> wrappedSearcher;
     private final LoadingCache<String, Collection<String>> cache;
 
@@ -56,4 +56,5 @@ public class CachedFileSearch implements Searcher<String, String> {
       return result;
     }
   }
-}
+  */
+ }

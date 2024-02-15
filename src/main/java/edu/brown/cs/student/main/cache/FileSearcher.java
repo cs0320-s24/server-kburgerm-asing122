@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FileSearcher implements Searcher<String,String> {
+public class FileSearcher implements Searcher<String, String> {
   private final List<String> lines = new ArrayList<>();
 
   private void initialize(String filename) throws IOException {
@@ -26,9 +26,8 @@ public class FileSearcher implements Searcher<String,String> {
   @Override
   public Collection<String> search(String target) {
     List<String> result = new ArrayList<>();
-    for(String line : lines) {
-      if(line.contains(target))
-        result.add(line);
+    for (String line : lines) {
+      if (line.contains(target)) result.add(line);
     }
     return result;
   }
