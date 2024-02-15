@@ -15,10 +15,9 @@ public class Server {
           response.header("Access-Control-Allow-Origin", "*");
           response.header("Access-Control-Allow-Methods", "*");
         });
-
-    Spark.get("loadcsv", new LoadHandler());
+    LoadHandler loadHandler = new LoadHandler();
+    Spark.get("loadcsv", loadHandler);
     Spark.get("broadband", new BroadbandHandler());
-
     Spark.init();
     Spark.awaitInitialization();
 

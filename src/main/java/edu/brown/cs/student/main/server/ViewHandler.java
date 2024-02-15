@@ -1,6 +1,9 @@
 package edu.brown.cs.student.main.server;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -15,6 +18,13 @@ public class ViewHandler implements Route {
 
   @Override
   public Object handle(Request request, Response response) throws Exception {
-    return null;
+    Map<String, Object> responseMap = new HashMap<>();
+    try {
+      responseMap.put("result", "success");
+      responseMap.put("data", this.loadedFile);
+    } catch (Exception e) {
+      responseMap.put("result", "failure");
+    }
+    return responseMap;
   }
 }

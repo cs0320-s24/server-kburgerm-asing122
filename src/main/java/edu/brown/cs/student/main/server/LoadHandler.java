@@ -11,15 +11,16 @@ import java.util.Map;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import spark.Spark;
 
 public class LoadHandler implements Route {
 
-  List<List<String>> loadedFile;
+  public List<List<String>> loadedFile;
 
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-    String filePath = request.queryParams("filePath");
+    String filePath = request.queryParams("filepath");
     String hasHeader = request.queryParams("hasHeader");
 
     Map<String, Object> responseMap = new HashMap<>();
@@ -29,10 +30,12 @@ public class LoadHandler implements Route {
 
       responseMap.put("result", "success");
       responseMap.put("loadCSV", filePath);
-
+      this.loadedFile = parser.parse();
     } catch (Exception e) {
       responseMap.put("result", "exception");
     }
+
+    Spark.get("viewcsv", new ViewHandler(this.loadedFile));
     return responseMap;
   }
 
