@@ -19,17 +19,17 @@ import spark.Route;
 
 public class BroadbandHandler implements Route {
 
-  private HashMap<String, Integer> stateCodes;
+  private HashMap<String, String> stateCodes;
   private HashMap<String, Integer> countyCodes;
 
   public BroadbandHandler() {
     try {
       System.out.println(this.getStateCodes());
-      this.stateCodes = new HashMap<String, Integer>();
+      this.stateCodes = new HashMap<String, String>();
       List<String[]> stateCodeList = this.getStateCodes();
       stateCodeList.remove(0);
       for (String[] stateAndCode : stateCodeList) {
-        this.stateCodes.put(stateAndCode[0], Integer.parseInt(stateAndCode[1]));
+        this.stateCodes.put(stateAndCode[0], stateAndCode[1]);
       }
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
@@ -40,8 +40,35 @@ public class BroadbandHandler implements Route {
     }
   }
 
-  private HashMap<String, Integer> getCountyCodes(int stateCode) {
-    return null;
+  private List<List<String>> getCountyCodes(String stateCode)
+      throws IOException, InterruptedException, URISyntaxException {
+    HttpRequest buildAcsApiRequest =
+        HttpRequest.newBuilder()
+            .uri(
+                new URI(
+                    "https://api.census.gov/data/2010/dec/sf1?get=NAME&in=state:"
+                        + stateCode
+                        + "&for=county:*"))
+            .GET()
+            .build();
+
+    // Send that API request then store the response in this variable. Note the generic type.
+    HttpResponse<String> sentAcsApiResponse =
+        HttpClient.newBuilder()
+            .build()
+            .send(buildAcsApiRequest, HttpResponse.BodyHandlers.ofString());
+    String jsonMap = sentAcsApiResponse.body();
+    try {
+      Moshi moshi = new Moshi.Builder().build();
+      System.out.println(jsonMap);
+      Type mapType = Types.newParameterizedType(List.class, List.class, String.class);
+      JsonAdapter<List<List<String>>> adapter = moshi.adapter(mapType);
+      List<List<String>> deserializedStateMap = adapter.fromJson(jsonMap);
+      // System.out.println(deserializedStateMap);
+      return deserializedStateMap;
+    } catch (IOException e) {
+      throw e;
+    }
   }
 
   private List<String[]> getStateCodes()
@@ -60,7 +87,6 @@ public class BroadbandHandler implements Route {
     String jsonMap = sentAcsApiResponse.body();
     try {
       Moshi moshi = new Moshi.Builder().build();
-      System.out.println(jsonMap);
       Type mapType = Types.newParameterizedType(List.class, String[].class);
       JsonAdapter<List<String[]>> adapter = moshi.adapter(mapType);
       List<String[]> deserializedStateMap = adapter.fromJson(jsonMap);
@@ -79,7 +105,7 @@ public class BroadbandHandler implements Route {
     try {
       String CSVjson = this.sendRequest(state, county);
       responseMap.put("result", "success");
-      responseMap.put("loadCSV", CSVjson);
+      responseMap.put("broadband", CSVjson);
     } catch (Exception e) {
       System.out.println(e.getStackTrace());
       responseMap.put("result", "exception");
@@ -89,13 +115,25 @@ public class BroadbandHandler implements Route {
 
   private String sendRequest(String state, String county)
       throws URISyntaxException, IOException, InterruptedException {
+    String stateCode = this.stateCodes.get(state);
+    List<List<String>> countyCodes = this.getCountyCodes(stateCode);
+    String countyCode = "";
+    for (List<String> countyInfo : countyCodes) {
+      String countyName = countyInfo.get(0).split(",")[0];
+      if (countyName.equals(county)) {
+        countyCode = countyInfo.get(2);
+      }
+    }
+    if (countyCode.equals("")) {
+      System.out.println("County not found");
+    }
     HttpRequest buildAcsApiRequest =
         HttpRequest.newBuilder()
             .uri(
                 new URI(
                     "https://api.census.gov/data/2021/acs/acs1/subject/"
                         + "variables?get=NAME,S2802_C03_022E&for=county:"
-                        + county
+                        + countyCode
                         + "&in=state:"
                         + state))
             .GET()
