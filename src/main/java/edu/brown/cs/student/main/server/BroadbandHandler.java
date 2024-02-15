@@ -104,6 +104,8 @@ public class BroadbandHandler implements Route {
     try {
       String CSVjson = this.sendRequest(state, county);
       responseMap.put("result", "success");
+      responseMap.put("state", state);
+      responseMap.put("county", county);
       responseMap.put("broadband", CSVjson);
     } catch (Exception e) {
       System.out.println(e.getStackTrace());

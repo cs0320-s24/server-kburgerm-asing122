@@ -18,6 +18,7 @@ public class Server {
 
     Spark.get("loadcsv", new LoadHandler());
     Spark.get("broadband", new BroadbandHandler());
+
     Spark.init();
     Spark.awaitInitialization();
 
