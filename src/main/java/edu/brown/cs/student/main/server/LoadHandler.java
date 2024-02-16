@@ -13,10 +13,21 @@ import spark.Response;
 import spark.Route;
 import spark.Spark;
 
+/**
+ * A handler for loading CSV files.
+ */
 public class LoadHandler implements Route {
 
   public List<List<String>> loadedFile;
 
+  /**
+   * Handles HTTP requests to load a CSV file.
+   *
+   * @param request The HTTP request object.
+   * @param response The HTTP response object.
+   * @return A map containing the response data.
+   * @throws Exception If an error occurs during request handling.
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
@@ -39,12 +50,30 @@ public class LoadHandler implements Route {
     return responseMap;
   }
 
+  /**
+   * Sends a request to load a CSV file.
+   *
+   * @param filepath The path to the CSV file.
+   * @param hasHeader Indicates whether the CSV file has a header.
+   * @return A string representing the result of the request.
+   * @throws URISyntaxException If the URI is invalid.
+   * @throws IOException If an I/O error occurs.
+   * @throws InterruptedException If the operation is interrupted.
+   */
   private String sendRequest(String filepath, boolean hasHeader)
       throws URISyntaxException, IOException, InterruptedException {
     return "";
   }
 
+  /**
+   * Represents the result of a successful CSV file load.
+   */
   record LoadSuccess(String result, String filepath) {
+    /**
+     * Constructs a LoadSuccess object with the specified file path.
+     *
+     * @param filepath The file path of the loaded CSV file.
+     */
     public LoadSuccess(String filepath) {
       this("success", filepath);
     }
