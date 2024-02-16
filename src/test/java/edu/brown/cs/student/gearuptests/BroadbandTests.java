@@ -24,18 +24,18 @@ import org.junit.jupiter.api.Test;
 import spark.Spark;
 
 public class BroadbandTests {
-  private JsonAdapter<Map<String,Object>> adapter;
+  private JsonAdapter<Map<String, Object>> adapter;
 
   public BroadbandTests() {
     Moshi moshi = new Moshi.Builder().build();
     Type type = Types.newParameterizedType(Map.class, String.class, Object.class);
     adapter = moshi.adapter(type);
   }
+
   @BeforeAll
   public static void setup_before_everything() {
     Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
-
   }
 
   @BeforeEach
@@ -71,19 +71,23 @@ public class BroadbandTests {
 
   @Test
   public void testLoadCSV() throws IOException {
-    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/census/income_by_race.csv&hasHeader=true");
+    HttpURLConnection clientConnection =
+        tryRequest("loadcsv?filepath=data/census/income_by_race.csv&hasHeader=true");
     assertEquals(200, clientConnection.getResponseCode());
-    Map<String,Object> response = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    assertEquals("success",response.get("result"));
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("success", response.get("result"));
   }
 
   @Test
   public void testViewCSV() throws IOException {
-    HttpURLConnection clientConnection1 = tryRequest("loadcsv?filepath=data/census/income_by_race.csv&hasHeader=true");
+    HttpURLConnection clientConnection1 =
+        tryRequest("loadcsv?filepath=data/census/income_by_race.csv&hasHeader=true");
     assertEquals(200, clientConnection1.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("viewcsv");
     assertEquals(200, clientConnection.getResponseCode());
-    Map<String,Object> response = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    assertEquals("success",response.get("result"));
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("success", response.get("result"));
   }
 }

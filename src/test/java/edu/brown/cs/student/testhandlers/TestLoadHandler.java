@@ -32,7 +32,7 @@ public class TestLoadHandler {
 
   @BeforeEach
   public void setup() {
-    csvFile= new CSVFile();
+    csvFile = new CSVFile();
     loadHandler = new LoadHandler(csvFile);
     Spark.get("loadcsv", loadHandler);
     Spark.init();
@@ -76,13 +76,14 @@ public class TestLoadHandler {
 
     Request request = new MockRequest(filePath, hasHeader);
     Response response = new MockResponse();
-
+    Moshi moshi = new Moshi.Builder().build();
+    Type mapType = Types.newParameterizedType(Map.class, String.class, Object.class);
+    JsonAdapter<Map<String, Object>> adapter = moshi.adapter(mapType);
     try {
       Object result = loadHandler.handle(request, response);
-
+      Map<String, Object> resultMap = adapter.fromJson(result.toString());
       assertNotNull(result);
-      assertTrue(result instanceof Map);
-      Map<String, Object> resultMap = (Map<String, Object>) result;
+      assertTrue(result instanceof String);
       assertEquals("success", resultMap.get("result"));
       assertEquals(filePath, resultMap.get("loadCSV"));
       assertNotNull(loadHandler.loadedFile);
@@ -98,14 +99,16 @@ public class TestLoadHandler {
 
     Request request = new MockRequest(filePath, hasHeader);
     MockResponse response = new MockResponse();
+    Moshi moshi = new Moshi.Builder().build();
+    Type mapType = Types.newParameterizedType(Map.class, String.class, Object.class);
+    JsonAdapter<Map<String, Object>> adapter = moshi.adapter(mapType);
 
     try {
       Object result = loadHandler.handle(request, response);
-
+      Map<String, Object> resultMap = adapter.fromJson(result.toString());
       assertNotNull(result);
-      assertTrue(result instanceof Map);
-      Map<String, Object> resultMap = (Map<String, Object>) result;
-      assertEquals("exception", resultMap.get("result"));
+      assertTrue(result instanceof String);
+      assertEquals("error_datasource", resultMap.get("result"));
 
     } catch (Exception e) {
       fail("Exception thrown: " + e.getMessage());
@@ -119,14 +122,17 @@ public class TestLoadHandler {
 
     Request request = new MockRequest(filePath, hasHeader);
     MockResponse response = new MockResponse();
+    Moshi moshi = new Moshi.Builder().build();
+    Type mapType = Types.newParameterizedType(Map.class, String.class, Object.class);
+    JsonAdapter<Map<String, Object>> adapter = moshi.adapter(mapType);
 
     try {
       Object result = loadHandler.handle(request, response);
+      Map<String, Object> resultMap = adapter.fromJson(result.toString());
 
       assertNotNull(result);
-      assertTrue(result instanceof Map);
-      Map<String, Object> resultMap = (Map<String, Object>) result;
-      assertEquals("exception", resultMap.get("result"));
+      assertTrue(result instanceof String);
+      assertEquals("error_datasource", resultMap.get("result"));
       assertNull(resultMap.get("loadCSV"));
     } catch (Exception e) {
       fail("Exception thrown: " + e.getMessage());

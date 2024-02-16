@@ -4,9 +4,9 @@ import java.util.List;
 
 public class CSVFile {
 
-    public List<List<String>> currentCSV;
+  public List<List<String>> currentCSV;
 
-    public void setCurrentCSV(List<List<String>> newFile) {
-        this.currentCSV = newFile;
-    }
+  public void setCurrentCSV(List<List<String>> newFile) {
+    this.currentCSV = newFile;
+  }
 }

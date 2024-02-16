@@ -4,7 +4,6 @@ import static org.testng.AssertJUnit.*;
 
 import edu.brown.cs.student.main.server.CSVFile;
 import edu.brown.cs.student.main.server.LoadHandler;
-import edu.brown.cs.student.main.server.SearchHandler;
 import edu.brown.cs.student.main.server.ViewHandler;
 import java.util.ArrayList;
 import java.util.List;
