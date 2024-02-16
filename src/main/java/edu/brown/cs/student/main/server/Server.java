@@ -16,7 +16,7 @@ public class Server {
    * @param args Command-line arguments (not used).
    */
   public static void main(String[] args) {
-    int port = 3232;
+    int port = 3230;
     Spark.port(port);
 
     after(
