@@ -3,25 +3,41 @@ package edu.brown.cs.student.testhandlers;
 import static org.junit.jupiter.api.Assertions.*;
 
 import edu.brown.cs.student.main.server.LoadHandler;
+import edu.brown.cs.student.main.server.SearchHandler;
+import edu.brown.cs.student.main.server.broadband.BroadbandHandler;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.Request;
 import spark.Response;
+import spark.Spark;
 
 public class TestLoadHandler {
 
   private LoadHandler loadHandler;
 
+  @BeforeAll
+  public static void setup_before_everything() {
+    Spark.port(0);
+    Logger.getLogger("").setLevel(Level.WARNING);
+  }
+
   @BeforeEach
-  public void setUp() {
+  public void setup() {
     loadHandler = new LoadHandler();
+    Spark.get("loadcsv", loadHandler);
+    Spark.init();
+    Spark.awaitInitialization();
   }
 
   @AfterEach
-  public void tearDown() {
-    // Clean up any resources if needed
+  public void teardown() {
+    Spark.unmap("loadcsv");
+    Spark.awaitStop();
   }
 
   @Test

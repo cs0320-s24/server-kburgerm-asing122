@@ -3,13 +3,15 @@ package edu.brown.cs.student.testhandlers;
 import spark.Request;
 
 public class MockRequest extends Request {
-  private final String filePath;
-  private final String hasHeader;
+  private String filePath;
+  private String hasHeader;
 
   public MockRequest(String filePath, String hasHeader) {
     this.filePath = filePath;
     this.hasHeader = hasHeader;
   }
+
+  public MockRequest() { }
 
   @Override
   public String queryParams(String name) {
@@ -24,3 +26,4 @@ public class MockRequest extends Request {
 
   // Implement other methods if needed
 }
+
