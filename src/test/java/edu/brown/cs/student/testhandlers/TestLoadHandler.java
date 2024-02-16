@@ -1,7 +1,8 @@
-package edu.brown.cs.student.main.server;
+package edu.brown.cs.student.testhandlers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.brown.cs.student.main.server.LoadHandler;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
