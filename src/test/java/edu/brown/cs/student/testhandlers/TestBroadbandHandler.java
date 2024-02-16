@@ -54,6 +54,21 @@ public class TestBroadbandHandler {
     assertEquals(mockResponse, result);
   }
 
+  @Test
+  public void testSendRequestCountyNotFound() throws Exception {
+    // Test when county is not found
+  }
+
+  @Test
+  public void testSendRequestIOException() throws Exception {
+    // broadbandHandler.sendRequest("InvalidState", "InvalidCounty");
+  }
+
+  @Test
+  public void testSendRequestURISyntaxException() throws Exception {
+    // broadbandHandler.sendRequest("Invalid:State", "Invalid:County");
+  }
+
   private Request createMockRequest(String state, String county) {
     return new Request() {
       @Override
