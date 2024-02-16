@@ -1,13 +1,11 @@
-package edu.brown.cs.student.main.server;
+package edu.brown.cs.student.main.server.broadband;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import edu.brown.cs.student.main.server.BroadbandHandler;
+import edu.brown.cs.student.main.server.broadband.strategy.CacheConfig;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import spark.Request;
 import spark.Response;
 import spark.Route;
