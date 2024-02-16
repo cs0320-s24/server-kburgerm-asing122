@@ -21,6 +21,7 @@ public class Server {
     LoadHandler loadHandler = new LoadHandler();
     Spark.get("loadcsv", loadHandler);
     Spark.get("broadband", new CacheProxy(new BroadbandHandler(), new BasicCacheConfig()));
+    Spark.get("viewcsv", (request, response) -> new ViewHandler(loadHandler.loadedFile).handle(request, response));
     Spark.init();
     Spark.awaitInitialization();
 
