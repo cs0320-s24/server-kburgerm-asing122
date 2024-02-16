@@ -43,10 +43,8 @@ public class LoadHandler implements Route {
       responseMap.put("loadCSV", filePath);
       this.loadedFile = parser.parse();
     } catch (Exception e) {
-      responseMap.put("result", "exception");
+      responseMap.put("result", "error_datasource");
     }
-
-    Spark.get("viewcsv", new ViewHandler(this.loadedFile));
     return responseMap;
   }
 

@@ -73,11 +73,9 @@ public class BroadbandHandler implements Route {
     String jsonMap = sentAcsApiResponse.body();
     try {
       Moshi moshi = new Moshi.Builder().build();
-      // System.out.println(jsonMap);
       Type mapType = Types.newParameterizedType(List.class, List.class, String.class);
       JsonAdapter<List<List<String>>> adapter = moshi.adapter(mapType);
       List<List<String>> deserializedStateMap = adapter.fromJson(jsonMap);
-      // System.out.println(deserializedStateMap);
       return deserializedStateMap;
     } catch (IOException e) {
       throw e;
@@ -132,13 +130,17 @@ public class BroadbandHandler implements Route {
     Map<String, Object> responseMap = new HashMap<>();
     try {
       String CSVjson = this.sendRequest(state, county);
+      if (CSVjson.equals("")) {
+        responseMap.put("result", "error_datasource");
+        return responseMap;
+      }
+      responseMap.put("broadband", CSVjson);
+
       responseMap.put("result", "success");
       responseMap.put("state", state);
       responseMap.put("county", county);
-      responseMap.put("broadband", CSVjson);
     } catch (Exception e) {
-      System.out.println(e.getStackTrace());
-      responseMap.put("result", "exception");
+      responseMap.put("result", "error_bad_request");
     }
     return responseMap;
   }
@@ -165,7 +167,7 @@ public class BroadbandHandler implements Route {
       }
     }
     if (countyCode.equals("")) {
-      System.out.println("County not found");
+      return "";
     }
     HttpRequest buildAcsApiRequest =
         HttpRequest.newBuilder()
@@ -183,8 +185,6 @@ public class BroadbandHandler implements Route {
         HttpClient.newBuilder()
             .build()
             .send(buildAcsApiRequest, HttpResponse.BodyHandlers.ofString());
-
-    System.out.println(sentAcsApiResponse.body());
     return sentAcsApiResponse.body();
   }
 }
