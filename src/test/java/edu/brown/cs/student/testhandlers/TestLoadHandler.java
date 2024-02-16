@@ -5,6 +5,7 @@ import static org.testng.AssertJUnit.*;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import edu.brown.cs.student.main.server.CSVFile;
 import edu.brown.cs.student.main.server.LoadHandler;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -21,6 +22,7 @@ import spark.Spark;
 public class TestLoadHandler {
 
   private LoadHandler loadHandler;
+  private CSVFile csvFile;
 
   @BeforeAll
   public static void setup_before_everything() {
@@ -30,7 +32,8 @@ public class TestLoadHandler {
 
   @BeforeEach
   public void setup() {
-    loadHandler = new LoadHandler();
+    csvFile= new CSVFile();
+    loadHandler = new LoadHandler(csvFile);
     Spark.get("loadcsv", loadHandler);
     Spark.init();
     Spark.awaitInitialization();

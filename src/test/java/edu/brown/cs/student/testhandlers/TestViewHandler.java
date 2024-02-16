@@ -2,7 +2,9 @@ package edu.brown.cs.student.testhandlers;
 
 import static org.testng.AssertJUnit.*;
 
+import edu.brown.cs.student.main.server.CSVFile;
 import edu.brown.cs.student.main.server.LoadHandler;
+import edu.brown.cs.student.main.server.SearchHandler;
 import edu.brown.cs.student.main.server.ViewHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +27,9 @@ public class TestViewHandler {
     List<String> row2 = List.of("2", "Jane", "Smith");
     loadedFile.add(row1);
     loadedFile.add(row2);
-
-    viewHandler = new ViewHandler(loadedFile);
+    CSVFile csvFile = new CSVFile();
+    csvFile.currentCSV = loadedFile;
+    viewHandler = new ViewHandler(csvFile);
   }
 
   @AfterEach
@@ -79,7 +82,8 @@ public class TestViewHandler {
     String filePath = "data/RI_income.csv";
     String hasHeader = "true";
 
-    loadHandler = new LoadHandler();
+    CSVFile csvFile = new CSVFile();
+    loadHandler = new LoadHandler(csvFile);
 
     Request request = new MockRequest(filePath, hasHeader);
     Response response = new MockResponse();

@@ -2,10 +2,13 @@ package edu.brown.cs.student.testhandlers;
 
 import static org.testng.AssertJUnit.*;
 
+import edu.brown.cs.student.main.server.CSVFile;
 import edu.brown.cs.student.main.server.SearchHandler;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.checkerframework.checker.units.qual.C;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
@@ -19,7 +22,9 @@ public class TestSearchHandler {
             Arrays.asList("apple", "banana", "orange"),
             Arrays.asList("cat", "dog", "elephant"),
             Arrays.asList("apple pie", "banana bread", "orange juice"));
-    SearchHandler searchHandler = new SearchHandler(testData);
+    CSVFile csvFile = new CSVFile();
+    csvFile.currentCSV = testData;
+    SearchHandler searchHandler = new SearchHandler(csvFile);
     MockRequest request = new MockRequest("apple", false, "1");
     Response response = new MockResponse();
     Map<String, Object> result = (Map<String, Object>) searchHandler.handle(request, response);
@@ -39,7 +44,9 @@ public class TestSearchHandler {
             Arrays.asList("Name", "Age", "Country"),
             Arrays.asList("John", "25", "USA"),
             Arrays.asList("Alice", "30", "Canada"));
-    SearchHandler searchHandler = new SearchHandler(testData);
+    CSVFile csvFile = new CSVFile();
+    csvFile.currentCSV = testData;
+    SearchHandler searchHandler = new SearchHandler(csvFile);
     Request request = new MockRequest();
     Response response = new MockResponse();
     Map<String, Object> result = (Map<String, Object>) searchHandler.handle(request, response);
@@ -57,7 +64,9 @@ public class TestSearchHandler {
             Arrays.asList("apple", "banana", "orange"),
             Arrays.asList("cat", "dog", "elephant"),
             Arrays.asList("apple pie", "banana bread", "orange juice"));
-    SearchHandler searchHandler = new SearchHandler(testData);
+    CSVFile csvFile = new CSVFile();
+    csvFile.currentCSV = testData;
+    SearchHandler searchHandler = new SearchHandler(csvFile);
     Request request = new MockRequest();
     Response response = new MockResponse();
     Map<String, Object> result = (Map<String, Object>) searchHandler.handle(request, response);
