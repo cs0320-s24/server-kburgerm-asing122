@@ -38,19 +38,6 @@ public class CacheProxy implements Route {
 
   @Override
   public Object handle(Request request, Response response) throws Exception {
-    String state = request.queryParams("state");
-    String county = request.queryParams("county");
-
-    Map<String, Object> responseMap = new HashMap<>();
-    try {
-      String cachedResponse = cache.get(state + ":" + county);
-      responseMap.put("result", "success");
-      responseMap.put("state", state);
-      responseMap.put("county", county);
-      responseMap.put("broadband", cachedResponse);
-    } catch (ExecutionException e) {
-      responseMap.put("result", "exception");
-    }
-    return responseMap;
+    return broadbandHandler.handle(request, response);
   }
 }

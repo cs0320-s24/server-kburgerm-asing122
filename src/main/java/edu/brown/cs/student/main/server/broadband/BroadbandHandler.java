@@ -51,7 +51,7 @@ public class BroadbandHandler implements Route {
             .GET()
             .build();
 
-    // Send that API request then store the response in this variable. Note the generic type.
+    // Send that API request then store the response in this variable.
     HttpResponse<String> sentAcsApiResponse =
         HttpClient.newBuilder()
             .build()
@@ -78,7 +78,7 @@ public class BroadbandHandler implements Route {
             .GET()
             .build();
 
-    // Send that API request then store the response in this variable. Note the generic type.
+    // Send that API request then store the response in this variable.
     HttpResponse<String> sentAcsApiResponse =
         HttpClient.newBuilder()
             .build()
