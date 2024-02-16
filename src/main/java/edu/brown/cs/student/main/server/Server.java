@@ -2,9 +2,9 @@ package edu.brown.cs.student.main.server;
 
 import static spark.Spark.after;
 
-import edu.brown.cs.student.main.server.broadband.strategy.BasicCacheConfig;
 import edu.brown.cs.student.main.server.broadband.BroadbandHandler;
 import edu.brown.cs.student.main.server.broadband.CacheProxy;
+import edu.brown.cs.student.main.server.broadband.strategy.BasicCacheConfig;
 import spark.Spark;
 
 public class Server {
@@ -21,7 +21,12 @@ public class Server {
     LoadHandler loadHandler = new LoadHandler();
     Spark.get("loadcsv", loadHandler);
     Spark.get("broadband", new CacheProxy(new BroadbandHandler(), new BasicCacheConfig()));
-    Spark.get("viewcsv", (request, response) -> new ViewHandler(loadHandler.loadedFile).handle(request, response));
+    Spark.get(
+        "viewcsv",
+        (request, response) -> new ViewHandler(loadHandler.loadedFile).handle(request, response));
+    Spark.get(
+        "searchcsv",
+        (request, response) -> new SearchHandler(loadHandler.loadedFile).handle(request, response));
     Spark.init();
     Spark.awaitInitialization();
 

@@ -1,8 +1,6 @@
 package edu.brown.cs.student.testhandlers;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import spark.Response;
@@ -30,4 +28,3 @@ public class MockResponse extends Response {
     return headers;
   }
 }
-

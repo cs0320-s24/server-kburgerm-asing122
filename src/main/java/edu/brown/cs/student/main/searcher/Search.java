@@ -41,6 +41,11 @@ public class Search {
     this.search(target, colID);
   }
 
+  public Search(String target, boolean header, String colID) {
+    this.searchResults = new ArrayList<>();
+    this.search(target, colID);
+  }
+
   /**
    * Constructor for Search. Searches a given file for the target query
    *
