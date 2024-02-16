@@ -35,10 +35,11 @@ public class ViewHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
     Map<String, Object> responseMap = new HashMap<>();
     try {
+      if (this.loadedFile.isEmpty())
       responseMap.put("result", "success");
       responseMap.put("data", this.loadedFile);
     } catch (Exception e) {
-      responseMap.put("result", "failure");
+      responseMap.put("result", "error_datasource");
     }
     return responseMap;
   }
