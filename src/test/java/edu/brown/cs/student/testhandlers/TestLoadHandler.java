@@ -37,9 +37,6 @@ public class TestLoadHandler {
   @AfterEach
   public void teardown() {
     Spark.unmap("loadcsv");
-    // Spark.unmap("viewcsv");
-    Spark.unmap("searchcsv");
-    Spark.unmap("activity");
     Spark.awaitStop();
   }
 
