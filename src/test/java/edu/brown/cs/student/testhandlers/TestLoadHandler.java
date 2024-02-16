@@ -63,6 +63,28 @@ public class TestLoadHandler {
   }
 
   @Test
+  public void testLoadRICSV() {
+    String filePath = "data/RI_income.csv";
+    String hasHeader = "true";
+
+    Request request = new MockRequest(filePath, hasHeader);
+    Response response = new MockResponse();
+
+    try {
+      Object result = loadHandler.handle(request, response);
+
+      assertNotNull(result);
+      assertTrue(result instanceof Map);
+      Map<String, Object> resultMap = (Map<String, Object>) result;
+      assertEquals("success", resultMap.get("result"));
+      assertEquals(filePath, resultMap.get("loadCSV"));
+      assertNotNull(loadHandler.loadedFile);
+    } catch (Exception e) {
+      fail("Exception thrown: " + e.getMessage());
+    }
+  }
+
+  @Test
   public void testLoadNonExistentCSVFile() {
     String filePath = "data/census/income_by_county.csv";
     String hasHeader = "true";
