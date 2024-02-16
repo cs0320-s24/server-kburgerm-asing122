@@ -1,4 +1,4 @@
-package edu.brown.cs.student;
+package edu.brown.cs.student.main.parser.strategy;
 
 /** Represents a data point of income data used for testing */
 public class IncomeDatum {
