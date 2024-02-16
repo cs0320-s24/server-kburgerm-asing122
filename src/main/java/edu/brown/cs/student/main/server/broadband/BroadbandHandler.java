@@ -17,11 +17,17 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * Handles HTTP requests related to broadband information.
+ */
 public class BroadbandHandler implements Route {
 
   private HashMap<String, String> stateCodes;
   private HashMap<String, Integer> countyCodes;
 
+  /**
+   * Initializes the BroadbandHandler and loads state codes.
+   */
   public BroadbandHandler() {
     try {
       this.stateCodes = new HashMap<String, String>();
@@ -39,6 +45,15 @@ public class BroadbandHandler implements Route {
     }
   }
 
+  /**
+   * Retrieves the county codes for a given state.
+   *
+   * @param stateCode The code of the state.
+   * @return A list of county codes.
+   * @throws IOException If an I/O error occurs.
+   * @throws InterruptedException If the operation is interrupted.
+   * @throws URISyntaxException If the URI syntax is incorrect.
+   */
   private List<List<String>> getCountyCodes(String stateCode)
       throws IOException, InterruptedException, URISyntaxException {
     HttpRequest buildAcsApiRequest =
@@ -51,7 +66,6 @@ public class BroadbandHandler implements Route {
             .GET()
             .build();
 
-    // Send that API request then store the response in this variable.
     HttpResponse<String> sentAcsApiResponse =
         HttpClient.newBuilder()
             .build()
@@ -70,6 +84,14 @@ public class BroadbandHandler implements Route {
     }
   }
 
+  /**
+   * Retrieves the state codes.
+   *
+   * @return A list of state codes.
+   * @throws URISyntaxException If the URI syntax is incorrect.
+   * @throws IOException If an I/O error occurs.
+   * @throws InterruptedException If the operation is interrupted.
+   */
   private List<String[]> getStateCodes()
       throws URISyntaxException, IOException, InterruptedException {
     HttpRequest buildAcsApiRequest =
@@ -78,7 +100,6 @@ public class BroadbandHandler implements Route {
             .GET()
             .build();
 
-    // Send that API request then store the response in this variable.
     HttpResponse<String> sentAcsApiResponse =
         HttpClient.newBuilder()
             .build()
@@ -95,6 +116,14 @@ public class BroadbandHandler implements Route {
     }
   }
 
+  /**
+   * Handles HTTP requests.
+   *
+   * @param request The HTTP request object.
+   * @param response The HTTP response object.
+   * @return A map containing the response data.
+   * @throws Exception If an error occurs during request handling.
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     String state = request.queryParams("state");
@@ -114,6 +143,16 @@ public class BroadbandHandler implements Route {
     return responseMap;
   }
 
+  /**
+   * Sends a request to fetch broadband information.
+   *
+   * @param state The state for which information is requested.
+   * @param county The county for which information is requested.
+   * @return The broadband information in JSON format.
+   * @throws URISyntaxException If the URI is invalid.
+   * @throws IOException If an I/O error occurs.
+   * @throws InterruptedException If the operation is interrupted.
+   */
   public String sendRequest(String state, String county)
       throws URISyntaxException, IOException, InterruptedException {
     String stateCode = this.stateCodes.get(state);
@@ -140,7 +179,6 @@ public class BroadbandHandler implements Route {
             .GET()
             .build();
 
-    // Send that API request then store the response in this variable. Note the generic type.
     HttpResponse<String> sentAcsApiResponse =
         HttpClient.newBuilder()
             .build()
