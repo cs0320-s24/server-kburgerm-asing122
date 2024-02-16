@@ -6,7 +6,6 @@ import edu.brown.cs.student.main.parser.CSVParser;
 import edu.brown.cs.student.main.parser.strategy.Util;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,11 @@ import spark.Route;
 /** A handler for loading CSV files. */
 public class LoadHandler implements Route {
 
-  public List<List<String>> loadedFile;
+  public CSVFile loadedFile;
+
+  public LoadHandler(CSVFile csvFile) {
+    this.loadedFile = csvFile;
+  }
 
   /**
    * Handles HTTP requests to load a CSV file.
@@ -37,11 +40,11 @@ public class LoadHandler implements Route {
     Map<String, Object> responseMap = new HashMap<>();
     try {
       CSVParser parser =
-              new CSVParser(new FileReader(filePath), new Util(), Boolean.parseBoolean(hasHeader));
+          new CSVParser(new FileReader(filePath), new Util(), Boolean.parseBoolean(hasHeader));
 
       responseMap.put("result", "success");
       responseMap.put("loadCSV", filePath);
-      this.loadedFile = parser.parse();
+      this.loadedFile.setCurrentCSV(parser.parse());
     } catch (Exception e) {
       responseMap.put("result", "error_datasource");
     }
@@ -51,7 +54,7 @@ public class LoadHandler implements Route {
     return jsonString;
   }
 
-    /**
+  /**
    * Sends a request to load a CSV file.
    *
    * @param filepath The path to the CSV file.

@@ -1,7 +1,6 @@
 package edu.brown.cs.student.main.parser.strategy;
 
 import edu.brown.cs.student.main.parser.FactoryFailureException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +17,9 @@ public class Util implements CreatorFromRow<List<String>> {
     List<String> list = new ArrayList<>();
     for (String s : row) {
       if (s.startsWith("\"") && s.endsWith("\"")) {
-        list.add(s.substring(1, s.length()-1));
+        list.add(s.substring(1, s.length() - 1));
       } else {
-       list.add(s);
+        list.add(s);
       }
     }
     return list;

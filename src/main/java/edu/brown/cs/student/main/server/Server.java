@@ -24,15 +24,12 @@ public class Server {
           response.header("Access-Control-Allow-Origin", "*");
           response.header("Access-Control-Allow-Methods", "*");
         });
-    LoadHandler loadHandler = new LoadHandler();
+    CSVFile csvFile = new CSVFile();
+    LoadHandler loadHandler = new LoadHandler(csvFile);
     Spark.get("loadcsv", loadHandler);
     Spark.get("broadband", new CacheProxy(new BroadbandHandler(), new BasicCacheConfig()));
-    Spark.get(
-        "viewcsv",
-        (request, response) -> new ViewHandler(loadHandler.loadedFile).handle(request, response));
-    Spark.get(
-        "searchcsv",
-        (request, response) -> new SearchHandler(loadHandler.loadedFile).handle(request, response));
+    Spark.get("viewcsv", new ViewHandler(csvFile));
+    Spark.get("searchcsv", new SearchHandler(csvFile));
     Spark.init();
     Spark.awaitInitialization();
 

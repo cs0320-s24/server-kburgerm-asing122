@@ -1,9 +1,8 @@
 package edu.brown.cs.student.main.server;
 
-import java.util.*;
-
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import java.util.*;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -11,15 +10,15 @@ import spark.Route;
 /** A handler for searching loaded CSV data. */
 public class SearchHandler implements Route {
 
-  List<List<String>> loadedFile;
+  CSVFile loadedFile;
 
   /**
    * Constructs a SearchHandler object with the given loaded CSV data.
    *
-   * @param loadedFile The loaded CSV data.
+   * @param csvFile The loaded CSV data.
    */
-  public SearchHandler(List<List<String>> loadedFile) {
-    this.loadedFile = loadedFile;
+  public SearchHandler(CSVFile csvFile) {
+    this.loadedFile = csvFile;
   }
 
   /**
@@ -54,7 +53,7 @@ public class SearchHandler implements Route {
       } catch (NumberFormatException e) {
         if (hasHeader) {
           int col = this.getColIndex(column);
-          if (col == this.loadedFile.get(0).size()) {
+          if (col == this.loadedFile.currentCSV.get(0).size()) {
             responseMap.put("result", "error_bad_request");
           } else {
             searchResults = this.search(target, col);
@@ -81,7 +80,7 @@ public class SearchHandler implements Route {
    */
   private List<List<String>> search(String target, int colID) {
     List<List<String>> searchResults = new ArrayList<>();
-    for (List<String> row : this.loadedFile) {
+    for (List<String> row : this.loadedFile.currentCSV) {
       if (row.get(colID).contains(target)) {
         searchResults.add(row);
       }
@@ -97,7 +96,7 @@ public class SearchHandler implements Route {
    */
   private int getColIndex(String column) {
     int col = 0;
-    for (String s : this.loadedFile.get(0)) {
+    for (String s : this.loadedFile.currentCSV.get(0)) {
       if (s.equals(column)) {
         break;
       }
@@ -116,13 +115,13 @@ public class SearchHandler implements Route {
   private List<List<String>> search(String target, String colID) {
     List<List<String>> searchResults = new ArrayList<>();
     int col = 0;
-    for (String s : this.loadedFile.get(0)) {
+    for (String s : this.loadedFile.currentCSV.get(0)) {
       if (s.equals(colID)) {
         break;
       }
       col++;
     }
-    for (List<String> row : this.loadedFile) {
+    for (List<String> row : this.loadedFile.currentCSV) {
       if (row.get(col).contains(target)) {
         searchResults.add(row);
       }
@@ -138,7 +137,7 @@ public class SearchHandler implements Route {
    */
   private List<List<String>> search(String target) {
     List<List<String>> searchResults = new ArrayList<>();
-    for (List<String> row : this.loadedFile) {
+    for (List<String> row : this.loadedFile.currentCSV) {
       for (String s : row) {
         if (s.contains(target)) {
           searchResults.add(row);

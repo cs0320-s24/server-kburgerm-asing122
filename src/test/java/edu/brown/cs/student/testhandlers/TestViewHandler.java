@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.Request;
 import spark.Response;
-import spark.Spark;
 
 public class TestViewHandler {
 
@@ -31,8 +30,7 @@ public class TestViewHandler {
   }
 
   @AfterEach
-  public void tearDown() {
-  }
+  public void tearDown() {}
 
   @Test
   public void testHandle() {

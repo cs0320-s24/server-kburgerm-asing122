@@ -2,7 +2,11 @@ package edu.brown.cs.student.testhandlers;
 
 import static org.testng.AssertJUnit.*;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.server.LoadHandler;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,13 +49,15 @@ public class TestLoadHandler {
 
     Request request = new MockRequest(filePath, hasHeader);
     Response response = new MockResponse();
-
+    Moshi moshi = new Moshi.Builder().build();
+    Type mapType = Types.newParameterizedType(Map.class, String.class, Object.class);
+    JsonAdapter<Map<String, Object>> adapter = moshi.adapter(mapType);
     try {
       Object result = loadHandler.handle(request, response);
-
+      Map<String, Object> resultMap = adapter.fromJson(result.toString());
       assertNotNull(result);
-      assertTrue(result instanceof Map);
-      Map<String, Object> resultMap = (Map<String, Object>) result;
+      assertTrue(result instanceof String);
+
       assertEquals("success", resultMap.get("result"));
       assertEquals(filePath, resultMap.get("loadCSV"));
       assertNotNull(loadHandler.loadedFile);
