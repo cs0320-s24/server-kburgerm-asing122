@@ -70,12 +70,12 @@ public class BroadbandTests {
   }
 
   @Test
-  public void testViewCSVHandlerSuccess() throws IOException {
-    tryRequest("loadcsv?path=census/income_by_race.csv&hasHeader=true");
+  public void testViewCSVHandlerFailure() throws IOException {
+    HttpURLConnection clientConnection1 = tryRequest("loadcsv?path=data/census/income_by_race.csv&hasHeader=true");
+    assertEquals(200, clientConnection1.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("viewcsv");
     assertEquals(200, clientConnection.getResponseCode());
     Map<String,Object> response = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    assertEquals("Success",response.get("result"));
-
+    assertEquals("success",response.get("result"));
   }
 }
