@@ -8,14 +8,30 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * A handler for searching loaded CSV data.
+ */
 public class SearchHandler implements Route {
 
   List<List<String>> loadedFile;
 
+  /**
+   * Constructs a SearchHandler object with the given loaded CSV data.
+   *
+   * @param loadedFile The loaded CSV data.
+   */
   public SearchHandler(List<List<String>> loadedFile) {
     this.loadedFile = loadedFile;
   }
 
+  /**
+   * Handles HTTP requests for searching loaded CSV data.
+   *
+   * @param request The HTTP request object.
+   * @param response The HTTP response object.
+   * @return A map containing the search results.
+   * @throws Exception If an error occurs during request handling.
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     String target = request.queryParams("target");
@@ -45,6 +61,13 @@ public class SearchHandler implements Route {
     return responseMap;
   }
 
+  /**
+   * Searches for a target string in a specific column of the loaded CSV data.
+   *
+   * @param target The target string to search for.
+   * @param colID The column index to search in.
+   * @return A list of search results.
+   */
   private List<List<String>> search(String target, int colID) {
     List<List<String>> searchResults = new ArrayList<>();
     for (List<String> row : this.loadedFile) {
@@ -55,6 +78,13 @@ public class SearchHandler implements Route {
     return searchResults;
   }
 
+  /**
+   * Searches for a target string in a column specified by its name/header.
+   *
+   * @param target The target string to search for.
+   * @param colID The name/header of the column to search in.
+   * @return A list of search results.
+   */
   private List<List<String>> search(String target, String colID) {
     List<List<String>> searchResults = new ArrayList<>();
     int col = 0;
@@ -72,6 +102,12 @@ public class SearchHandler implements Route {
     return searchResults;
   }
 
+  /**
+   * Searches for a target string across all columns of the loaded CSV data.
+   *
+   * @param target The target string to search for.
+   * @return A list of search results.
+   */
   private List<List<String>> search(String target) {
     List<List<String>> searchResults = new ArrayList<>();
     for (List<String> row : this.loadedFile) {
