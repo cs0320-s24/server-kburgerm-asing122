@@ -11,11 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.Request;
-<<<<<<< HEAD
 import spark.Response;
 import spark.Spark;
-=======
->>>>>>> 3d7151bbfc7a42ffc2648b4d8aa48931145a14e0
 
 public class TestViewHandler {
 
