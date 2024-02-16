@@ -4,9 +4,15 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import edu.brown.cs.student.main.server.BroadbandHandler;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import spark.Request;
+import spark.Response;
+import spark.Route;
 
-public class CacheProxy {
+public class CacheProxy implements Route {
   private final BroadbandHandler broadbandHandler;
   private final LoadingCache<String, String> cache;
 
@@ -34,5 +40,23 @@ public class CacheProxy {
       System.out.println("Error fetching data from cache: " + e.getMessage());
       return "";
     }
+  }
+
+  @Override
+  public Object handle(Request request, Response response) throws Exception {
+    String state = request.queryParams("state");
+    String county = request.queryParams("county");
+
+    Map<String, Object> responseMap = new HashMap<>();
+    try {
+      String cachedResponse = cache.get(state + ":" + county);
+      responseMap.put("result", "success");
+      responseMap.put("state", state);
+      responseMap.put("county", county);
+      responseMap.put("broadband", cachedResponse);
+    } catch (ExecutionException e) {
+      responseMap.put("result", "exception");
+    }
+    return responseMap;
   }
 }
