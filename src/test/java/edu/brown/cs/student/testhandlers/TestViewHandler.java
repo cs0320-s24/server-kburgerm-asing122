@@ -77,4 +77,47 @@ public class TestViewHandler {
       fail("Exception thrown: " + e.getMessage());
     }
   }
+
+  @Test
+  public void testViewAndLoad() {
+
+    String filePath = "data/RI_income.csv";
+    String hasHeader = "true";
+
+    loadHandler = new LoadHandler();
+
+    Request request = new MockRequest(filePath, hasHeader);
+    Response response = new MockResponse();
+
+    try {
+      Object result = loadHandler.handle(request, response);
+
+      assertNotNull(result);
+      assertTrue(result instanceof Map);
+      Map<String, Object> resultMap = (Map<String, Object>) result;
+      assertEquals("success", resultMap.get("result"));
+      assertEquals(filePath, resultMap.get("loadCSV"));
+      assertNotNull(loadHandler.loadedFile);
+    } catch (Exception e) {
+      fail("Exception thrown: " + e.getMessage());
+    }
+
+    viewHandler = new ViewHandler(loadHandler.loadedFile);
+
+    Request viewRequest = new MockRequest();
+    MockResponse viewResponse = new MockResponse();
+
+    try {
+      Object result = viewHandler.handle(viewRequest, viewResponse);
+
+      assertNotNull(result);
+      assertTrue(result instanceof Map);
+      Map<String, Object> resultMap = (Map<String, Object>) result;
+      assertEquals("success", resultMap.get("result"));
+      assertNull(resultMap.get("data"));
+
+    } catch (Exception e) {
+      fail("Exception thrown: " + e.getMessage());
+    }
+  }
 }
