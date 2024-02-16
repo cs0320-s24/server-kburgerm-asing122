@@ -35,15 +35,13 @@ public class SearchHandler implements Route {
     Set<String> params = request.queryParams();
 
     Map<String, Object> responseMap = new HashMap<>();
-    if (!params.contains("target") || !params.contains("hasHeader")) {
-      responseMap.put("result", "error_bad_request");
-      return responseMap;
-    }
     String target = request.queryParams("target");
     Boolean hasHeader = Boolean.parseBoolean(request.queryParams("hasHeader"));
     String column = request.queryParams("column");
     List<List<String>> searchResults = new ArrayList<>();
-    if (column.length() < 1) {
+    if (!params.contains("target")) {
+      responseMap.put("result", "error_bad_request");
+    } else if (!params.contains("column")) {
       searchResults = this.search(target);
       responseMap.put("result", "success");
       responseMap.put("searchResults", searchResults);
@@ -63,7 +61,8 @@ public class SearchHandler implements Route {
             responseMap.put("result", "success");
             responseMap.put("searchResults", searchResults);
           }
-
+        } else {
+          responseMap.put("result", "error_bad_request");
         }
       }
     }
