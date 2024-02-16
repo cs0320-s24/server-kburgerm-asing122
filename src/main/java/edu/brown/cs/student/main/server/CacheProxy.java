@@ -16,13 +16,9 @@ public class CacheProxy implements Route {
   private final BroadbandHandler broadbandHandler;
   private final LoadingCache<String, String> cache;
 
-  public CacheProxy(BroadbandHandler broadbandHandler, int minutes, int size) {
+  public CacheProxy(BroadbandHandler broadbandHandler, CacheConfig config) {
     this.broadbandHandler = broadbandHandler;
-    this.cache = CacheBuilder.newBuilder()
-        .maximumSize(size)
-        .expireAfterWrite(minutes, TimeUnit.MINUTES)
-        .recordStats()
-        .build(new CacheLoader<String, String>() {
+    this.cache = config.configureCache().build(new CacheLoader<String, String>() {
           @Override
           public String load(String key) throws Exception {
             String[] params = key.split(",");
