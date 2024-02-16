@@ -2,13 +2,13 @@ package edu.brown.cs.student.main.server;
 
 import java.util.*;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-/**
- * A handler for searching loaded CSV data.
- */
+/** A handler for searching loaded CSV data. */
 public class SearchHandler implements Route {
 
   List<List<String>> loadedFile;
@@ -66,7 +66,10 @@ public class SearchHandler implements Route {
         }
       }
     }
-    return responseMap;
+    Moshi moshi = new Moshi.Builder().build();
+    JsonAdapter<Map> jsonAdapter = moshi.adapter(Map.class);
+    String jsonString = jsonAdapter.toJson(responseMap);
+    return jsonString;
   }
 
   /**

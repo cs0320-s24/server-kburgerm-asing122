@@ -17,17 +17,13 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-/**
- * Handles HTTP requests related to broadband information.
- */
+/** Handles HTTP requests related to broadband information. */
 public class BroadbandHandler implements Route {
 
   private HashMap<String, String> stateCodes;
   private HashMap<String, Integer> countyCodes;
 
-  /**
-   * Initializes the BroadbandHandler and loads state codes.
-   */
+  /** Initializes the BroadbandHandler and loads state codes. */
   public BroadbandHandler() {
     try {
       this.stateCodes = new HashMap<String, String>();
@@ -142,7 +138,10 @@ public class BroadbandHandler implements Route {
     } catch (Exception e) {
       responseMap.put("result", "error_bad_request");
     }
-    return responseMap;
+    Moshi moshi = new Moshi.Builder().build();
+    JsonAdapter<Map> jsonAdapter = moshi.adapter(Map.class);
+    String jsonString = jsonAdapter.toJson(responseMap);
+    return jsonString;
   }
 
   /**

@@ -7,9 +7,7 @@ import edu.brown.cs.student.main.server.broadband.CacheProxy;
 import edu.brown.cs.student.main.server.broadband.strategy.BasicCacheConfig;
 import spark.Spark;
 
-/**
- * The main class for starting the server.
- */
+/** The main class for starting the server. */
 public class Server {
 
   /**

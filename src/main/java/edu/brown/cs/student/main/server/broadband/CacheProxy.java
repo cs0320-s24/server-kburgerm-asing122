@@ -8,8 +8,8 @@ import spark.Response;
 import spark.Route;
 
 /**
- * CacheProxy is a proxy class that handles caching of broadband data.
- * It uses a LoadingCache to cache the results of broadband queries based on state and county.
+ * CacheProxy is a proxy class that handles caching of broadband data. It uses a LoadingCache to
+ * cache the results of broadband queries based on state and county.
  */
 public class CacheProxy implements Route {
   private final BroadbandHandler broadbandHandler;
@@ -19,7 +19,7 @@ public class CacheProxy implements Route {
    * Constructs a CacheProxy with the given BroadbandHandler and CacheConfig.
    *
    * @param broadbandHandler The BroadbandHandler instance to handle broadband requests.
-   * @param config           The CacheConfig instance to configure the cache.
+   * @param config The CacheConfig instance to configure the cache.
    */
   public CacheProxy(BroadbandHandler broadbandHandler, CacheConfig config) {
     this.broadbandHandler = broadbandHandler;
@@ -41,7 +41,7 @@ public class CacheProxy implements Route {
   /**
    * Retrieves cached broadband data for the given state and county.
    *
-   * @param state  The state for which to retrieve broadband data.
+   * @param state The state for which to retrieve broadband data.
    * @param county The county for which to retrieve broadband data.
    * @return The cached broadband data as a String.
    */
@@ -57,7 +57,7 @@ public class CacheProxy implements Route {
   /**
    * Handles HTTP requests by delegating to the underlying BroadbandHandler.
    *
-   * @param request  The HTTP request object.
+   * @param request The HTTP request object.
    * @param response The HTTP response object.
    * @return The result of handling the request.
    * @throws Exception If an error occurs during request handling.

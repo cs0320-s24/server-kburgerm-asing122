@@ -1,6 +1,5 @@
 package edu.brown.cs.student.main;
 
-
 /** The Main class of our project. This is where execution begins. */
 public final class Main {
   /**
@@ -19,7 +18,6 @@ public final class Main {
    */
   private Main(String[] args) {
     int len = args.length;
-
   }
 
   private void run() {}
