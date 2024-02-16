@@ -1,5 +1,6 @@
 package edu.brown.cs.student.main.parser;
 
+import edu.brown.cs.student.main.parser.strategy.CreatorFromRow;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;

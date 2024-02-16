@@ -1,6 +1,6 @@
 package edu.brown.cs.student.testhandlers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.testng.AssertJUnit.*;
 
 import edu.brown.cs.student.main.server.broadband.BroadbandHandler;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,6 @@
 package edu.brown.cs.student.testhandlers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.testng.AssertJUnit.*;
 
 import edu.brown.cs.student.main.server.ViewHandler;
 import java.util.ArrayList;

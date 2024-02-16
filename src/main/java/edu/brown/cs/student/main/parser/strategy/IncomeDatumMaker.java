@@ -1,6 +1,5 @@
-package edu.brown.cs.student;
+package edu.brown.cs.student.main.parser.strategy;
 
-import edu.brown.cs.student.main.parser.CreatorFromRow;
 import edu.brown.cs.student.main.parser.FactoryFailureException;
 import java.util.List;
 

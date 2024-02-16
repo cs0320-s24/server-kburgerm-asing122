@@ -1,7 +1,7 @@
 package edu.brown.cs.student.main.server;
 
 import edu.brown.cs.student.main.parser.CSVParser;
-import edu.brown.cs.student.main.searcher.Util;
+import edu.brown.cs.student.main.parser.strategy.Util;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
