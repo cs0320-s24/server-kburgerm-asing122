@@ -1,121 +1,117 @@
 package edu.brown.cs.student.testhandlers;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.server.CSVFile;
 import edu.brown.cs.student.main.server.LoadHandler;
+import edu.brown.cs.student.main.server.SearchHandler;
 import edu.brown.cs.student.main.server.ViewHandler;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spark.Request;
-import spark.Response;
+import spark.Spark;
 
 public class TestViewHandler {
+  private JsonAdapter<Map<String, Object>> adapter;
 
-  private ViewHandler viewHandler;
-  private LoadHandler loadHandler;
+  public TestViewHandler() {
+    Moshi moshi = new Moshi.Builder().build();
+    Type type = Types.newParameterizedType(Map.class, String.class, Object.class);
+    adapter = moshi.adapter(type);
+  }
+
+  @BeforeAll
+  public static void setup_before_everything() {
+    Spark.port(0);
+    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+  }
 
   @BeforeEach
-  public void setUp() {
-    List<List<String>> loadedFile = new ArrayList<>();
-    List<String> row1 = List.of("1", "John", "Doe");
-    List<String> row2 = List.of("2", "Jane", "Smith");
-    loadedFile.add(row1);
-    loadedFile.add(row2);
-    CSVFile csvFile = new CSVFile();
-    csvFile.currentCSV = loadedFile;
-    viewHandler = new ViewHandler(csvFile);
+  public void setup() {
+    // Re-initialize state, etc. for _every_ test method run
+    CSVFile accessCSV = new CSVFile();
+    // In fact, restart the entire Spark server for every test!
+    Spark.get("loadcsv", new LoadHandler(accessCSV));
+    Spark.get("searchcsv", new SearchHandler(accessCSV));
+    Spark.get("viewcsv", new ViewHandler(accessCSV));
+    Spark.init();
+    Spark.awaitInitialization(); // don't continue until the server is listening
   }
 
   @AfterEach
-  public void tearDown() {}
+  public void teardown() {
+    // Gracefully stop Spark listening on both endpoints after each test
+    Spark.unmap("loadcsv");
+    Spark.unmap("searchcsv");
+    Spark.unmap("viewcsv");
+    Spark.awaitStop(); // don't proceed until the server is stopped
+  }
 
-  @Test
-  public void testHandle() {
-    MockRequest request = new MockRequest();
-    MockResponse response = new MockResponse();
+  private static HttpURLConnection tryRequest(String apiCall) throws IOException {
+    URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
+    HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
 
-    try {
-      Object result = viewHandler.handle(request, response);
+    clientConnection.setRequestMethod("GET");
 
-      assertNotNull(result);
-      assertTrue(result instanceof Map);
-      Map<String, Object> resultMap = (Map<String, Object>) result;
-      assertEquals("success", resultMap.get("result"));
-      assertNotNull(resultMap.get("data"));
-      assertTrue(resultMap.get("data") instanceof List);
-
-    } catch (Exception e) {
-      fail("Exception thrown: " + e.getMessage());
-    }
+    clientConnection.connect();
+    return clientConnection;
   }
 
   @Test
-  public void testHandleWithoutData() {
-    viewHandler = new ViewHandler(null);
-
-    Request request = new MockRequest();
-    MockResponse response = new MockResponse();
-
-    try {
-      Object result = viewHandler.handle(request, response);
-
-      assertNotNull(result);
-      assertTrue(result instanceof Map);
-      Map<String, Object> resultMap = (Map<String, Object>) result;
-      assertEquals("success", resultMap.get("result"));
-      assertNull(resultMap.get("data"));
-
-    } catch (Exception e) {
-      fail("Exception thrown: " + e.getMessage());
-    }
+  public void testLoadCSV() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("loadcsv?filepath=data/census/income_by_race.csv&hasHeader=true");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("success", response.get("result"));
   }
 
   @Test
-  public void testViewAndLoad() {
+  public void testViewCSV() throws IOException {
+    HttpURLConnection clientConnection1 =
+        tryRequest("loadcsv?filepath=data/census/income_by_race.csv&hasHeader=true");
+    assertEquals(200, clientConnection1.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("viewcsv");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("success", response.get("result"));
+  }
 
-    String filePath = "data/RI_income.csv";
-    String hasHeader = "true";
+  @Test
+  public void testViewRIIncome() throws IOException {
+    HttpURLConnection clientConnection1 =
+        tryRequest("loadcsv?filepath=data/RI_income.csv&hasHeader=true");
+    assertEquals(200, clientConnection1.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("viewcsv");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("success", response.get("result"));
+  }
 
-    CSVFile csvFile = new CSVFile();
-    loadHandler = new LoadHandler(csvFile);
-
-    Request request = new MockRequest(filePath, hasHeader);
-    Response response = new MockResponse();
-
-    try {
-      Object result = loadHandler.handle(request, response);
-
-      assertNotNull(result);
-      assertTrue(result instanceof Map);
-      Map<String, Object> resultMap = (Map<String, Object>) result;
-      assertEquals("success", resultMap.get("result"));
-      assertEquals(filePath, resultMap.get("loadCSV"));
-      assertNotNull(loadHandler.loadedFile);
-    } catch (Exception e) {
-      fail("Exception thrown: " + e.getMessage());
-    }
-
-    viewHandler = new ViewHandler(loadHandler.loadedFile);
-
-    Request viewRequest = new MockRequest();
-    MockResponse viewResponse = new MockResponse();
-
-    try {
-      Object result = viewHandler.handle(viewRequest, viewResponse);
-
-      assertNotNull(result);
-      assertTrue(result instanceof Map);
-      Map<String, Object> resultMap = (Map<String, Object>) result;
-      assertEquals("success", resultMap.get("result"));
-      assertNull(resultMap.get("data"));
-
-    } catch (Exception e) {
-      fail("Exception thrown: " + e.getMessage());
-    }
+  @Test
+  public void testViewNoCSV() throws IOException {
+    HttpURLConnection clientConnection1 =
+        tryRequest("loadcsv?filepath=data/census/RI_income.csv&hasHeader=true");
+    assertEquals(200, clientConnection1.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("viewcsv");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("error_datasource", response.get("result"));
   }
 }
