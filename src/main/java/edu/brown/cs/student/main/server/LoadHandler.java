@@ -1,9 +1,12 @@
 package edu.brown.cs.student.main.server;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.parser.CSVParser;
 import edu.brown.cs.student.main.parser.strategy.Util;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +14,8 @@ import java.util.Map;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import spark.Spark;
 
-/**
- * A handler for loading CSV files.
- */
+/** A handler for loading CSV files. */
 public class LoadHandler implements Route {
 
   public List<List<String>> loadedFile;
@@ -37,7 +37,7 @@ public class LoadHandler implements Route {
     Map<String, Object> responseMap = new HashMap<>();
     try {
       CSVParser parser =
-          new CSVParser(new FileReader(filePath), new Util(), Boolean.parseBoolean(hasHeader));
+              new CSVParser(new FileReader(filePath), new Util(), Boolean.parseBoolean(hasHeader));
 
       responseMap.put("result", "success");
       responseMap.put("loadCSV", filePath);
@@ -45,10 +45,13 @@ public class LoadHandler implements Route {
     } catch (Exception e) {
       responseMap.put("result", "error_datasource");
     }
-    return responseMap;
+    Moshi moshi = new Moshi.Builder().build();
+    JsonAdapter<Map> jsonAdapter = moshi.adapter(Map.class);
+    String jsonString = jsonAdapter.toJson(responseMap);
+    return jsonString;
   }
 
-  /**
+    /**
    * Sends a request to load a CSV file.
    *
    * @param filepath The path to the CSV file.
@@ -63,9 +66,7 @@ public class LoadHandler implements Route {
     return "";
   }
 
-  /**
-   * Represents the result of a successful CSV file load.
-   */
+  /** Represents the result of a successful CSV file load. */
   record LoadSuccess(String result, String filepath) {
     /**
      * Constructs a LoadSuccess object with the specified file path.

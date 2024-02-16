@@ -3,13 +3,14 @@ package edu.brown.cs.student.main.server;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-/**
- * A handler for viewing loaded CSV data.
- */
+/** A handler for viewing loaded CSV data. */
 public class ViewHandler implements Route {
 
   List<List<String>> loadedFile;
@@ -35,12 +36,14 @@ public class ViewHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
     Map<String, Object> responseMap = new HashMap<>();
     try {
-      if (this.loadedFile.isEmpty())
-      responseMap.put("result", "success");
+      if (this.loadedFile.isEmpty()) responseMap.put("result", "success");
       responseMap.put("data", this.loadedFile);
     } catch (Exception e) {
       responseMap.put("result", "error_datasource");
     }
-    return responseMap;
+    Moshi moshi = new Moshi.Builder().build();
+    JsonAdapter<Map> jsonAdapter = moshi.adapter(Map.class);
+    String jsonString = jsonAdapter.toJson(responseMap);
+    return jsonString;
   }
 }

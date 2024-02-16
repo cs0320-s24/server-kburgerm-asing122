@@ -3,13 +3,11 @@ package edu.brown.cs.student.testhandlers;
 import static org.testng.AssertJUnit.*;
 
 import edu.brown.cs.student.main.server.broadband.BroadbandHandler;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.Request;
 import spark.Response;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Map;
 
 public class TestBroadbandHandler {
 
@@ -46,8 +44,9 @@ public class TestBroadbandHandler {
 
   @Test
   public void testSendRequest() throws Exception {
-    String mockResponse = "[[\"NAME\",\"S2802_C03_022E\",\"state\",\"county\"],\n"
-        + "[\"Los Angeles County, California\",\"89.9\",\"06\",\"037\"]]";
+    String mockResponse =
+        "[[\"NAME\",\"S2802_C03_022E\",\"state\",\"county\"],\n"
+            + "[\"Los Angeles County, California\",\"89.9\",\"06\",\"037\"]]";
 
     String result = broadbandHandler.sendRequest("California", "Los Angeles County");
 
@@ -73,10 +72,8 @@ public class TestBroadbandHandler {
     return new Request() {
       @Override
       public String queryParams(String param) {
-        if (param.equals("state"))
-          return state;
-        else if (param.equals("county"))
-          return county;
+        if (param.equals("state")) return state;
+        else if (param.equals("county")) return county;
         return null;
       }
     };

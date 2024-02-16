@@ -33,7 +33,7 @@ public class MockRequest extends Request {
     this.hasHeader = Boolean.toString(hasHeader);
   }
 
-  public MockRequest() { }
+  public MockRequest() {}
 
   @Override
   public String queryParams(String name) {
@@ -54,4 +54,3 @@ public class MockRequest extends Request {
     }
   }
 }
-
