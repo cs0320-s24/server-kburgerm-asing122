@@ -114,7 +114,7 @@ public class BroadbandHandler implements Route {
     return responseMap;
   }
 
-  private String sendRequest(String state, String county)
+  public String sendRequest(String state, String county)
       throws URISyntaxException, IOException, InterruptedException {
     String stateCode = this.stateCodes.get(state);
     List<List<String>> countyCodes = this.getCountyCodes(stateCode);
