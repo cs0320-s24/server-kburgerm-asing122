@@ -1,9 +1,7 @@
 package edu.brown.cs.student.main.server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -34,10 +32,16 @@ public class SearchHandler implements Route {
    */
   @Override
   public Object handle(Request request, Response response) throws Exception {
+    Set<String> params = request.queryParams();
+
+    Map<String, Object> responseMap = new HashMap<>();
+    if (!params.contains("target") || !params.contains("hasHeader")) {
+      responseMap.put("result", "error_bad_request");
+      return responseMap;
+    }
     String target = request.queryParams("target");
     Boolean hasHeader = Boolean.parseBoolean(request.queryParams("hasHeader"));
     String column = request.queryParams("column");
-    Map<String, Object> responseMap = new HashMap<>();
     List<List<String>> searchResults = new ArrayList<>();
     if (column.length() < 1) {
       searchResults = this.search(target);
@@ -51,13 +55,18 @@ public class SearchHandler implements Route {
         responseMap.put("searchResults", searchResults);
       } catch (NumberFormatException e) {
         if (hasHeader) {
-          searchResults = this.search(target, column);
-          responseMap.put("result", "success");
-          responseMap.put("searchResults", searchResults);
+          int col = this.getColIndex(column);
+          if (col == this.loadedFile.get(0).size()) {
+            responseMap.put("result", "error_bad_request");
+          } else {
+            searchResults = this.search(target, col);
+            responseMap.put("result", "success");
+            responseMap.put("searchResults", searchResults);
+          }
+
         }
       }
     }
-
     return responseMap;
   }
 
@@ -76,6 +85,23 @@ public class SearchHandler implements Route {
       }
     }
     return searchResults;
+  }
+
+  /**
+   * Returns the integer index representing the column of the given name
+   *
+   * @param column
+   * @return index corresponding to coulmn name
+   */
+  private int getColIndex(String column) {
+    int col = 0;
+    for (String s : this.loadedFile.get(0)) {
+      if (s.equals(column)) {
+        break;
+      }
+      col++;
+    }
+    return col;
   }
 
   /**
