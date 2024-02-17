@@ -1,89 +1,77 @@
 package edu.brown.cs.student.testhandlers;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
 
-import edu.brown.cs.student.main.server.broadband.BroadbandHandler;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
+import edu.brown.cs.student.main.server.CSVFile;
+import edu.brown.cs.student.main.server.LoadHandler;
+import edu.brown.cs.student.main.server.SearchHandler;
+import edu.brown.cs.student.main.server.ViewHandler;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import okio.Buffer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spark.Request;
-import spark.Response;
+import spark.Spark;
 
 public class TestBroadbandHandler {
+  private JsonAdapter<Map<String, Object>> adapter;
 
-  private BroadbandHandler broadbandHandler;
+  public TestBroadbandHandler() {
+    Moshi moshi = new Moshi.Builder().build();
+    Type type = Types.newParameterizedType(Map.class, String.class, Object.class);
+    adapter = moshi.adapter(type);
+  }
+
+  @BeforeAll
+  public static void setup_before_everything() {
+    Spark.port(0);
+    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+  }
 
   @BeforeEach
-  public void setUp() {
-    broadbandHandler = new BroadbandHandler();
+  public void setup() {
+    // Re-initialize state, etc. for _every_ test method run
+    CSVFile accessCSV = new CSVFile();
+    // In fact, restart the entire Spark server for every test!
+    Spark.get("broadband", new LoadHandler(accessCSV));
+    Spark.init();
+    Spark.awaitInitialization(); // don't continue until the server is listening
+  }
+
+  @AfterEach
+  public void teardown() {
+    // Gracefully stop Spark listening on both endpoints after each test
+    Spark.unmap("broadband");
+    Spark.awaitStop(); // don't proceed until the server is stopped
+  }
+
+  private static HttpURLConnection tryRequest(String apiCall) throws IOException {
+    URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
+    HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
+
+    clientConnection.setRequestMethod("GET");
+
+    clientConnection.connect();
+    return clientConnection;
   }
 
   @Test
-  public void testHandleSuccess() throws Exception {
-    Request request = createMockRequest("California", "Los Angeles");
-    Response response = createMockResponse();
-
-    Object result = broadbandHandler.handle(request, response);
-
-    Map<String, Object> resultMap = (Map<String, Object>) result;
-    assertEquals("success", resultMap.get("result"));
-    assertEquals("California", resultMap.get("state"));
-    assertEquals("Los Angeles", resultMap.get("county"));
-  }
-
-  @Test
-  public void testHandleException() throws Exception {
-    Request request = createMockRequest("InvalidState", "InvalidCounty");
-    Response response = createMockResponse();
-
-    Object result = broadbandHandler.handle(request, response);
-
-    Map<String, Object> resultMap = (Map<String, Object>) result;
-    assertEquals("exception", resultMap.get("result"));
-  }
-
-  @Test
-  public void testSendRequest() throws Exception {
-    String mockResponse =
-        "[[\"NAME\",\"S2802_C03_022E\",\"state\",\"county\"],\n"
-            + "[\"Los Angeles County, California\",\"89.9\",\"06\",\"037\"]]";
-
-    String result = broadbandHandler.sendRequest("California", "Los Angeles County");
-
-    assertEquals(mockResponse, result);
-  }
-
-  @Test
-  public void testSendRequestCountyNotFound() throws Exception {
-    // Test when county is not found
-  }
-
-  @Test
-  public void testSendRequestIOException() throws Exception {
-    // broadbandHandler.sendRequest("InvalidState", "InvalidCounty");
-  }
-
-  @Test
-  public void testSendRequestURISyntaxException() throws Exception {
-    // broadbandHandler.sendRequest("Invalid:State", "Invalid:County");
-  }
-
-  private Request createMockRequest(String state, String county) {
-    return new Request() {
-      @Override
-      public String queryParams(String param) {
-        if (param.equals("state")) return state;
-        else if (param.equals("county")) return county;
-        return null;
-      }
-    };
-  }
-
-  // Helper method to create a mock Response
-  private Response createMockResponse() {
-    return new Response() {
-      @Override
-      public void status(int statusCode) {}
-    };
+  public void testSearchBroadbandFail() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("broadband?state=California&county=*");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("error_datasource", response.get("result"));
   }
 }
