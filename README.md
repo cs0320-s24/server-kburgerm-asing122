@@ -23,8 +23,8 @@ There is an extensive test suite for this program. Th test suite tests the parsi
 
 # How to
 To use each endpoint:
-loadcsv "localhost:3232/loadcsv?filepath=<filepath goes here>"
+loadcsv "localhost:3232/loadcsv?filepath=<filepathgoeshere>"
 viewcsv "localhost:3232/viewcsv"
-searchcsv "localhost:3232/searchcsv?target=<search target>&hasHeader=<"true" if yes>&column=<(optional) column name or int index>"
-broadband "localhost:3232/broadband?state=<state name>&county=<county name>"
+searchcsv "localhost:3232/searchcsv?target=<searchtarget>&hasHeader=<"true" if yes>&column=<(optional) column name or int index>"
+broadband "localhost:3232/broadband?state=<statename>&county=<countyname>"
 
