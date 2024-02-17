@@ -25,6 +25,6 @@ There is an extensive test suite for this program. Th test suite tests the parsi
 To use each endpoint:
 loadcsv "localhost:3232/loadcsv?filepath=<filepathgoeshere>"
 viewcsv "localhost:3232/viewcsv"
-searchcsv "localhost:3232/searchcsv?target=<searchtarget>&hasHeader=<"true" if yes>&column=<(optional) column name or int index>"
+searchcsv "localhost:3232/searchcsv?target=(searchtarget)&hasHeader=<"true" if yes>&column=<(optional) column name or int index>"
 broadband "localhost:3232/broadband?state=<statename>&county=<countyname>"
 
