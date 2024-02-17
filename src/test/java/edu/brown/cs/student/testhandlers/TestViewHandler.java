@@ -114,4 +114,16 @@ public class TestViewHandler {
         adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     assertEquals("error_datasource", response.get("result"));
   }
+
+  @Test
+  public void testViewOtherCSV() throws IOException {
+    HttpURLConnection clientConnection1 =
+        tryRequest("loadcsv?filepath=data/census/income_by_race.csv&hasHeader=true");
+    assertEquals(200, clientConnection1.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("viewcsv");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("success", response.get("result"));
+  }
 }

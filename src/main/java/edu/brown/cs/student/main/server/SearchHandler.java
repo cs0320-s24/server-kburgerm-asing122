@@ -53,7 +53,7 @@ public class SearchHandler implements Route {
       } catch (NumberFormatException e) {
         if (hasHeader) {
           int col = this.getColIndex(column);
-          if (col == this.loadedFile.currentCSV.get(0).size()) {
+          if (col >= this.loadedFile.currentCSV.get(0).size() || col < 0) {
             responseMap.put("result", "error_bad_request");
           } else {
             searchResults = this.search(target, col);
